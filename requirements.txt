@@ -4,3 +4,5 @@ pandas
 numpy
 prince
 matplotlib
+umap-learn
+seaborn
