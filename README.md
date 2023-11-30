@@ -56,15 +56,15 @@ Une fois l’image Docker téléchargée, vous pouvez lancer le projet en utilis
 **Avec Volume :**
 
 ```bash
-docker run -v </chemin_local>:<chemin_dans_le_conteneur> nom_de_votre_image:tag
+docker run -v .:/app projet_data_eng:v1
 ```
 
-Cette commande crée un conteneur avec un volume, établissant une liaison entre le chemin local et le chemin dans le conteneur, permettant ainsi une interaction efficace.
+Cette commande doit être exécutée à l'intérieur du dossier du projet, elle crée un conteneur avec un volume, établissant une liaison entre le chemin local et le chemin dans le conteneur, permettant ainsi une interaction efficace.
 
 **Sans Volume :**
 
 ```bash
-docker run nom_de_votre_image:tag
+docker run projet_data_eng:v1
 ```
 
 Utilisez cette commande si vous n'avez pas besoin de spécifier un volume. Elle lancera le projet dans un conteneur Docker sans liens particuliers avec des fichiers locaux.
