@@ -7,6 +7,7 @@ import prince
 import umap
 from sklearn.cluster import KMeans
 import matplotlib.pyplot as plt
+import os
 
 def dim_red(mat, p, method):
     '''
@@ -67,42 +68,52 @@ def clust(mat, k):
     
     return pred
 
-# import data
-ng20 = fetch_20newsgroups(subset='test')
-corpus = ng20.data[:2000]
-labels = ng20.target[:2000]
-k = len(set(labels))
+# main
+if __name__ == '__main__':
+    # import data
+    ng20 = fetch_20newsgroups(subset='test')
+    corpus = ng20.data[:2000]
+    labels = ng20.target[:2000]
+    k = len(set(labels))
 
-# embedding
-# model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
-# embeddings = model.encode(corpus)
-# load embeddings
-embeddings = np.load('embeddings.npy')
-import pandas as pd
-embeddings = pd.DataFrame(embeddings)
-
-# Perform dimensionality reduction and clustering for each method
-methods = ['ACP', 'TSNE', 'UMAP', None]
-for method in methods:
-    if method is None:
-        print(f'Method: Without dimensionality reduction')
-        red_emb = embeddings
+    # embeddings
+    # if file does not exist, create it
+    if not os.path.exists('embeddings.npy'):
+        model = SentenceTransformer('paraphrase-MiniLM-L6-v2')
+        embeddings = model.encode(corpus)
+        np.save('embeddings.npy', embeddings)
     else:
-        print(f'Method: {method}')
-        # Perform dimensionality reduction
-        red_emb = dim_red(embeddings, 20, method)
+        # load embeddings
+        embeddings = np.load('embeddings.npy')
+        import pandas as pd
+        embeddings = pd.DataFrame(embeddings)
 
-    # Perform clustering
-    pred = clust(red_emb, k)
+    # create imgs folder if it does not exist
+    if not os.path.exists('imgs'):
+        os.makedirs('imgs')
 
-    # Evaluate clustering results
-    nmi_score = normalized_mutual_info_score(pred, labels)
-    ari_score = adjusted_rand_score(pred, labels)
+    # Perform dimensionality reduction and clustering for each method
+    methods = ['ACP', 'TSNE', 'UMAP', None]
+    for method in methods:
+        if method is None:
+            print(f'Method: Without dimensionality reduction')
+            red_emb = embeddings
+        else:
+            print(f'Method: {method}')
+            # Perform dimensionality reduction
+            red_emb = dim_red(embeddings, 20, method)
 
-    # Print results
-    red_emb = pd.DataFrame(red_emb)
-    print(f'NMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
-    # Plot results (save as png)
-    plt.scatter(red_emb[0], red_emb[1], c=pred)
-    plt.savefig(f'clustering_{method}.png')
-    plt.close()
+        # Perform clustering
+        pred = clust(red_emb, k)
+
+        # Evaluate clustering results
+        nmi_score = normalized_mutual_info_score(pred, labels)
+        ari_score = adjusted_rand_score(pred, labels)
+
+        # Print results
+        red_emb = pd.DataFrame(red_emb)
+        print(f'NMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+        # Plot results (save as png)
+        plt.scatter(red_emb[0], red_emb[1], c=pred)
+        plt.savefig(f'imgs/clustering_{method}.png')
+        plt.close()
