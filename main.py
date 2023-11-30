@@ -2,6 +2,7 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
 from sentence_transformers import SentenceTransformer
 from sklearn.manifold import TSNE
+from sklearn.cluster import AgglomerativeClustering
 import numpy as np
 import prince
 import umap
@@ -49,7 +50,7 @@ def dim_red(mat, p, method):
     return red_mat
 
 
-def clust(mat, k):
+def clust(mat, k, method):
     '''
     Perform clustering
 
@@ -61,12 +62,19 @@ def clust(mat, k):
     ------
         pred : list of predicted labels
     '''
-    
-    # Kmeans
-    kmeans = KMeans(n_clusters=k, random_state=0, n_init="auto").fit(mat)
-    pred = kmeans.labels_
+    if method=='CAH':
+        clustering = AgglomerativeClustering(n_clusters=k).fit(mat)
+        pred = clustering.labels_
+
+    elif method=='Kmeans':
+        kmeans = KMeans(n_clusters=k, random_state=0, n_init="auto").fit(mat)
+        pred = kmeans.labels_
+
+    else:
+        raise Exception("Please select one of the two methods : DBSCAN, Kmeans")
     
     return pred
+
 
 # main
 if __name__ == '__main__':
@@ -93,27 +101,30 @@ if __name__ == '__main__':
         os.makedirs('imgs')
 
     # Perform dimensionality reduction and clustering for each method
-    methods = ['ACP', 'TSNE', 'UMAP', None]
-    for method in methods:
-        if method is None:
-            print(f'Method: Without dimensionality reduction')
-            red_emb = embeddings
-        else:
-            print(f'Method: {method}')
-            # Perform dimensionality reduction
-            red_emb = dim_red(embeddings, 20, method)
+    dim_red_methods = ['ACP', 'TSNE', 'UMAP', None]
+    clustering_algorithms = ['Kmeans', 'CAH']
+    for method in dim_red_methods:
+        for clust_alg in clustering_algorithms:
+            if method is None:
+                print(f'Method: Without dimensionality reduction, clustering: {clust_alg}') 
+                red_emb = embeddings
+            else:
+                print(f'Method: {method}, clustering: {clust_alg}')
+                # Perform dimensionality reduction
+                red_emb = dim_red(embeddings, 20, method)
 
-        # Perform clustering
-        pred = clust(red_emb, k)
+            # Perform clustering
+            pred = clust(red_emb, k, clust_alg)
 
-        # Evaluate clustering results
-        nmi_score = normalized_mutual_info_score(pred, labels)
-        ari_score = adjusted_rand_score(pred, labels)
+            # Evaluate clustering results
+            nmi_score = normalized_mutual_info_score(pred, labels)
+            ari_score = adjusted_rand_score(pred, labels)
 
-        # Print results
-        red_emb = pd.DataFrame(red_emb)
-        print(f'NMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
-        # Plot results (save as png)
-        plt.scatter(red_emb[0], red_emb[1], c=pred)
-        plt.savefig(f'imgs/clustering_{method}.png')
-        plt.close()
+            # Print results
+            red_emb = pd.DataFrame(red_emb)
+            print(f'NMI: {nmi_score:.2f} \nARI: {ari_score:.2f}\n')
+            # Plot results (save as png)
+            plt.scatter(red_emb[0], red_emb[1], c=pred)
+            plt.savefig(f'imgs/clustering_{method}_{clust_alg}.png')
+            plt.close()
+    
