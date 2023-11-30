@@ -2,7 +2,7 @@ from sklearn.datasets import fetch_20newsgroups
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_score
 from sentence_transformers import SentenceTransformer
 import numpy as np
-
+import prince
 
 def dim_red(mat, p, method):
     '''
@@ -17,8 +17,18 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        red_mat = mat[:,:p]
-        
+        pca = prince.PCA(
+        n_components=p,
+        n_iter=3,
+        rescale_with_mean=True,
+        rescale_with_std=True,
+        copy=True,
+        check_input=True,
+        engine='sklearn',
+        random_state=42
+        )
+        pca = pca.fit(mat)    
+        red_mat = pca.transform(mat)
     elif method=='AFC':
         red_mat = mat[:,:p]
         
