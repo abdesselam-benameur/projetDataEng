@@ -1,5 +1,4 @@
 venv
-*.npy
 .DS_Store
 experiments/.ipynb_checkpoints/
 .ipynb_checkpoints/
