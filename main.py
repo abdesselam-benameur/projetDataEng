@@ -3,7 +3,7 @@ from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_
 from sentence_transformers import SentenceTransformer
 from sklearn.manifold import TSNE
 import numpy as np
-
+import umap
 
 def dim_red(mat, p, method):
     '''
@@ -25,7 +25,8 @@ def dim_red(mat, p, method):
         red_mat = tsne.fit_transform(mat)
         
     elif method=='UMAP':
-        red_mat = mat[:,:p]
+        reducer = umap.UMAP(n_components=p)
+        red_mat = reducer.fit_transform(mat)
         
     else:
         raise Exception("Please select one of the three methods : APC, AFC, UMAP")
