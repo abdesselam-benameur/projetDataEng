@@ -51,13 +51,7 @@ Une fois Docker installé et configuré, téléchargez l'image Docker en éxecut
 docker pull abdesselambenameur/projet_data_eng:v1
 ```
 
-Une fois l’image Docker téléchargée, vous pouvez la builder en utilisant la commande suivante :
-
-```bash
-docker build -t nom_de_votre_image:tag .
-```
-
-Une fois l’image construite, pour lancer le projet, vous avez deux options :
+Une fois l’image Docker téléchargée, vous pouvez lancer le projet en utiliser deux commandes :
 
 **Avec Volume :**
 
