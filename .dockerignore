@@ -1,0 +1,11 @@
+venv
+*.npy
+.DS_Store
+experiments/.ipynb_checkpoints/
+.ipynb_checkpoints/
+Projet final M2.pdf
+Dockerfile
+templates
+experiments
+TODO.txt
+README.md
