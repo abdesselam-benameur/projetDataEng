@@ -1,2 +1,6 @@
 scikit-learn
 sentence-transformers
+pandas
+numpy
+prince
+matplotlib
