@@ -5,6 +5,7 @@ from sklearn.manifold import TSNE
 import numpy as np
 import prince
 import umap
+from sklearn.cluster import KMeans
 
 def dim_red(mat, p, method):
     '''
@@ -59,7 +60,9 @@ def clust(mat, k):
         pred : list of predicted labels
     '''
     
-    pred = np.random.randint(k, size=len(corpus))
+    # Kmeans
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(mat)
+    pred = kmeans.labels_
     
     return pred
 
