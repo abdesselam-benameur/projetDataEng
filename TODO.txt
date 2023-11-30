@@ -3,3 +3,5 @@
 - update Dockerfile
 - update .gitignore
 - update .dockerignore
+- (bonus) do different executions and do the average of the results
+- (bonus) streamlit
