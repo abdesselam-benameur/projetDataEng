@@ -3,5 +3,8 @@
 - update Dockerfile
 - update .gitignore
 - update .dockerignore
+- push the image to dockerhub
 - (bonus) do different executions and do the average of the results
 - (bonus) streamlit
+- (bonus) add a new clustering algorithm
+- (bonus) test this idea: build te image then delete main.py then try to run the image (does it work? why?)
