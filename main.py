@@ -3,6 +3,7 @@ from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_rand_
 from sentence_transformers import SentenceTransformer
 from sklearn.manifold import TSNE
 import numpy as np
+import prince
 import umap
 
 def dim_red(mat, p, method):
@@ -18,7 +19,18 @@ def dim_red(mat, p, method):
         red_mat : NxP list such that p<<m
     '''
     if method=='ACP':
-        red_mat = mat[:,:p]
+        pca = prince.PCA(
+        n_components=p,
+        n_iter=3,
+        rescale_with_mean=True,
+        rescale_with_std=True,
+        copy=True,
+        check_input=True,
+        engine='sklearn',
+        random_state=42
+        )
+        pca = pca.fit(mat)    
+        red_mat = pca.transform(mat)
         
     elif method=='TSNE':
         tsne = TSNE(n_components=2, verbose=1, perplexity=40, n_iter=300)
